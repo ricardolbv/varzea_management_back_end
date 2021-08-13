@@ -12,7 +12,7 @@
 
 ##### \* Comando para inicializar o projeto: "python manage.py runserver"
 
-#### \* Comando para rodar migration (Atualizar tabela do banco): "python manage.py migrate"
+#### \* Comando para rodar migration (Atualizar tabela do banco): "python manage.py makemigrations" "python manage.py migrate"
 
 #### \* Comando para criar superuser migration (Usuario de acesso a api): "python manage.py createsuperuser"
 
