@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'campeonato'
 ]
 
 MIDDLEWARE = [
@@ -74,11 +75,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": {
+        "ENGINE": "mssql",
+        "NAME": "varzeaapp",
+        "USER": "root",
+        "PASSWORD": "123",
+        "HOST": "127.0.0.1",
+        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", },
+    },
 }
+# 127.0.0.1
 
 
 # Password validation
