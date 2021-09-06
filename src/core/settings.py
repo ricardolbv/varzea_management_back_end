@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'rest_framework',
     'campeonato',
+    'equipe',
 ]
 
 REST_FRAMEWORK = {
