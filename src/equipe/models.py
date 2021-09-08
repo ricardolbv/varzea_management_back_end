@@ -3,14 +3,15 @@ from drf_yasg import openapi
 
 
 class Capitao(models.Model):
-    nome = models.CharField(max_length=35)
-    cpf = models.CharField(max_length=20)
-    telefone = models.CharField(max_length=20)
+    nome = models.CharField(max_length=50)
+    cpf = models.CharField(max_length=25)
+    telefone = models.CharField(max_length=25)
     endereco = models.CharField(max_length=35)
     numero = models.IntegerField()
-    complemento = models.CharField(max_length=35, null=True)
+    complemento = models.CharField(max_length=35, blank = True)
     cidade = models.CharField(max_length=40)
     estado = models.CharField(max_length=40)
+    cep = models.CharField(max_length=40)
 
 
 """Representação do Objeto no Swagger"""
@@ -25,4 +26,5 @@ CapitaoAPIFields = openapi.Schema(
         'complemento': openapi.Schema(type=openapi.TYPE_STRING),
         'cidade': openapi.Schema(type=openapi.TYPE_STRING),
         'estado': openapi.Schema(type=openapi.TYPE_STRING),
+        'cep': openapi.Schema(type=openapi.TYPE_STRING),
     })
