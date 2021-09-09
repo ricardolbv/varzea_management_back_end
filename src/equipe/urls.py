@@ -1,9 +1,10 @@
+from os import name
 from django.urls import path
 from . import views
 
 
 urlpatterns = [
     path('capitao/', views.createCaptao, name='new-capitao'),
-    path('capitaes/', views.allCaptaes),
-    path('capitao/<str:key>', views.getCapitaoById),
+    path('capitaes/', views.allCaptaes, name='all-capitaes'),
+    path('capitao/<str:key>', views.getCapitaoById, name='one-capitao'),
 ]

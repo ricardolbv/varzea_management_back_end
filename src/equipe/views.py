@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -8,7 +9,7 @@ from .models import Capitao, CapitaoAPIFields
 from .serializer import CapitaoSerializer
 
 
-@swagger_auto_schema(methods=['post'], responses={201: 'Capitão criado com sucesso', 400: 'Erro ao criar capitão'},
+@swagger_auto_schema(methods=['post'], responses={201: 'Capitão criado com sucesso', 400: 'Erro ao criar capitão', 404: 'Conteudo de criação incorreta para recurso'},
                      request_body=CapitaoAPIFields)
 @api_view(['POST'])
 def createCaptao(request):
@@ -19,7 +20,8 @@ def createCaptao(request):
         return Response(data='Erro ao criar novo capitão', status='400')
     if serializer.is_valid():
         serializer.save()
-    return Response(serializer.data, status='201')
+        return Response(serializer.data, status='201')
+    return Response("Conteudo de criação incorreta para recurso", status='404')
 
 
 @swagger_auto_schema(methods=['get'], responses={200: 'Retorna todos os capitães', 400: 'Erro ao retornar todos os capitães'})
