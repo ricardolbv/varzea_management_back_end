@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.forms.models import model_to_dict
 
+from datetime import datetime
+
 from .models import Capitao, Time, CapitaoAPIFields
 from .serializer import CapitaoSerializer
 
@@ -16,11 +18,14 @@ from .serializer import CapitaoSerializer
 def createCaptao(request):
     """Cria capitão"""
     try:
+        if request.data['time']['data'] is '':
+            request.data['time']['data'] = datetime.today().strftime('%Y-%m-%d')
+
         new_time = Time.objects.create(
             nome=request.data['time']['nome'],
             local=request.data['time']['local'],
             modalidade=request.data['time']['modalidade'],
-            data=request.data['time']['data']
+            data = request.data['time']['data']
         )
         new_time.save()
 
@@ -37,7 +42,6 @@ def createCaptao(request):
             time = new_time,
         )
 
-        print(new_capitao)
         serializer = CapitaoSerializer(data = model_to_dict(new_capitao))
 
 
@@ -45,8 +49,15 @@ def createCaptao(request):
         return Response(data=err, status='400')
 
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status='201')
+        try:
+            serializer.save()
+            return Response(serializer.data, status='201')
+        except:
+            response = Capitao.objects.get(id = model_to_dict(new_capitao)['id'])
+            _serializer = CapitaoSerializer(response, many=False)
+
+            return Response(_serializer.data, status='201') # Bypass: erro de integridade do msql
+
 
     return Response(serializer.errors, status='404')
 

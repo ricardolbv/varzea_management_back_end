@@ -27,10 +27,10 @@ class Capitao(models.Model):
     endereco = models.CharField(max_length=35)
     numero = models.IntegerField()
     complemento = models.CharField(max_length=35, blank=True)
-    cidade = models.CharField(max_length=40)
+    cidade = models.CharField(max_length=45)
     estado = models.CharField(max_length=40)
     cep = models.CharField(max_length=40)
-    time = models.OneToOneField(Time, on_delete=models.CASCADE, blank=True)
+    time = models.OneToOneField(Time, on_delete=models.CASCADE) #Chave estrangeira não pode ser null
 
 
 """Representação do Objeto Capitão no Swagger"""
