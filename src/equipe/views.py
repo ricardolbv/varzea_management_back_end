@@ -4,8 +4,9 @@ from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.forms.models import model_to_dict
 
-from .models import Capitao, CapitaoAPIFields
+from .models import Capitao, Time, CapitaoAPIFields
 from .serializer import CapitaoSerializer
 
 
@@ -15,13 +16,39 @@ from .serializer import CapitaoSerializer
 def createCaptao(request):
     """Cria capitão"""
     try:
-        serializer = CapitaoSerializer(data=request.data)
-    except:
-        return Response(data='Erro ao criar novo capitão', status='400')
+        new_time = Time.objects.create(
+            nome=request.data['time']['nome'],
+            local=request.data['time']['local'],
+            modalidade=request.data['time']['modalidade'],
+            data=request.data['time']['data']
+        )
+        new_time.save()
+
+        new_capitao = Capitao.objects.create(
+            nome = request.data['nome'],
+            cpf = request.data['cpf'],
+            telefone = request.data['telefone'],
+            endereco = request.data['endereco'],
+            numero = request.data['numero'],
+            complemento = request.data['complemento'],
+            cidade = request.data['cidade'],
+            estado = request.data['estado'],
+            cep = request.data['cep'],
+            time = new_time,
+        )
+
+        print(new_capitao)
+        serializer = CapitaoSerializer(data = model_to_dict(new_capitao))
+
+
+    except Exception as err:
+        return Response(data=err, status='400')
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status='201')
-    return Response("Conteudo de criação incorreta para recurso", status='404')
+
+    return Response(serializer.errors, status='404')
 
 
 @swagger_auto_schema(methods=['get'], responses={200: 'Retorna todos os capitães', 400: 'Erro ao retornar todos os capitães'})
