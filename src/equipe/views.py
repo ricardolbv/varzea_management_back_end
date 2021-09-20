@@ -1,15 +1,15 @@
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.forms.models import model_to_dict
 
 from datetime import datetime
 
-from .models import Capitao, Time, CapitaoAPIFields
-from .serializer import CapitaoSerializer
+from .models import Capitao, Time, CapitaoAPIFields, TimeAPIFields
+from .serializer import CapitaoSerializer, TimeSerializer
 
 
 @swagger_auto_schema(methods=['post'], responses={201: 'Capitão criado com sucesso', 400: 'Erro ao criar capitão', 404: 'Conteudo de criação incorreta para recurso'},
@@ -85,3 +85,27 @@ def getCapitaoById(request, key):
             return Response(data=serializer.data, status='200')
     except:
         return Response(data='Nenhum capitão com esse ID', status='404')
+
+
+@swagger_auto_schema(methods=['put'], responses={202: 'Time atualizado com sucesso', 404: 'Time não encontrado', 400: 'Erro ao atualizar time'},
+                    request_body=TimeAPIFields)
+@api_view(['PUT'])
+def updateTimeById(request, key):
+    """Atualiza o time com base no ID passado por parâmetro"""
+    try:
+        time = Time.objects.get(id=key)
+    except:
+        return Response(data='Time inexistente', status='404')
+
+    serializer = TimeSerializer(time, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(data=serializer.data, status="200")
+    
+    return Response(data=serializer.errors, status="400")
+
+          
+
+  
