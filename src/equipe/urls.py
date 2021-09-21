@@ -14,4 +14,5 @@ urlpatterns = [
         name="create-jogador",
     ),
     path("time/<str:key>", views.getTimeById, name="one-time"),
+    path("jogador/<str:key>", views.getJogadorById, name="one-jogador"),
 ]

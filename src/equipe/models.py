@@ -22,7 +22,7 @@ TimeAPIFields = openapi.Schema(
 
 
 class Jogador(models.Model):
-    time = models.ForeignKey(Time, on_delete=models.CASCADE, null=True)
+    time = models.ForeignKey(Time, on_delete=models.DO_NOTHING, null=True)
     nome = models.CharField(max_length=50)
     posicao = models.CharField(max_length=25)
 

@@ -11,12 +11,11 @@ class JogadorSerializer(serializers.ModelSerializer):
 
 
 class TimeSerializer(serializers.ModelSerializer):
-    jogadores = JogadorSerializer(many=True, read_only=True)
+    jogadores = JogadorSerializer(source="jogador_set", many=True, read_only=True)
 
     class Meta:
         model = Time
         fields = ("id", "nome", "local", "modalidade", "data", "jogadores")
-        depth = 1
 
 
 class CapitaoSerializer(serializers.ModelSerializer):
@@ -37,4 +36,4 @@ class CapitaoSerializer(serializers.ModelSerializer):
             "cep",
             "time",
         )
-        depth = 2
+        depth = 1

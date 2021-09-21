@@ -176,7 +176,7 @@ def createPlayerOnIDTeam(request, key):
     methods=["get"],
     responses={
         200: "Retorna o time com base no ID",
-        404: "Timenão encontrado",
+        404: "Time não encontrado",
         400: "Erro ao retornar time",
     },
 )
@@ -188,5 +188,25 @@ def getTimeById(request, key):
     except:
         return Response(data="Time inexistente", status="404")
 
-    serializer = TimeSerializer(time)
+    serializer = TimeSerializer(instance=time)
+    return Response(data=serializer.data, status="200")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna o jogador com base no ID",
+        404: "Jogador não encontrado",
+        400: "Erro ao retornar jogador",
+    },
+)
+@api_view(["GET"])
+def getJogadorById(request, key):
+    """Retorna o jogador com base no ID"""
+    try:
+        jogador = Jogador.objects.get(id=key)
+    except:
+        return Response(data="Jogador inexistente", status="404")
+
+    serializer = JogadorSerializer(instance=jogador)
     return Response(data=serializer.data, status="200")
