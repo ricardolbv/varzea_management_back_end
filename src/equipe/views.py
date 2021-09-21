@@ -210,3 +210,49 @@ def getJogadorById(request, key):
 
     serializer = JogadorSerializer(instance=jogador)
     return Response(data=serializer.data, status="200")
+
+
+@swagger_auto_schema(
+    methods=["put"],
+    responses={
+        200: "Jogador atualizado com sucesso",
+        404: "Jogador não encontrado",
+        400: "Erro ao atualizar Jogador",
+    },
+    request_body=JogadorAPIFields,
+)
+@api_view(["PUT"])
+def updateJogadorById(request, key):
+    """Atualiza o jogador com base no ID passado por parâmetro"""
+    try:
+        jogador = Jogador.objects.get(id=key)
+    except:
+        return Response(data="Jogador inexistente", status="404")
+
+    serializer = JogadorSerializer(jogador, data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(data=serializer.data, status="200")
+
+    return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["delete"],
+    responses={
+        200: "Jogador excluido com sucesso",
+        404: "Jogador não encontrado",
+        400: "Erro ao atualizar Jogador",
+    },
+)
+@api_view(["DELETE"])
+def deleteJogadorById(request, key):
+    """Exclui o jogador com base no ID passado por parâmetro"""
+    try:
+        Jogador.objects.get(id=key).delete()
+    except:
+        return Response(data="Jogador inexistente", status="404")
+
+    return Response(data="Jogador deletado", status="200")
