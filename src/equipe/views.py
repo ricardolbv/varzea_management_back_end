@@ -256,3 +256,36 @@ def deleteJogadorById(request, key):
         return Response(data="Jogador inexistente", status="404")
 
     return Response(data="Jogador deletado", status="200")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Times retornados com sucesso",
+        404: "Erro ao retornar os times",
+        400: "Time inexistente",
+    },
+)
+@api_view(["GET"])
+def getTimesParaJogar(request, key):
+    """Retorna times disponiveis para jogo com base no ID de um time"""
+    try:
+        Time.objects.get(id=key)
+
+    except:
+        return Response(data="Time inexistente", status="400")
+
+    try:
+        times = Time.objects.all()
+
+        times_dispo = (
+            [  # Regra de nócio: Retorno times que possuem nome diferente de ""
+                time for time in times if int(time.id) != int(key) and time.nome != ""
+            ]
+        )
+        serializer = TimeSerializer(times_dispo, many=True)
+
+        return Response(data=serializer.data, status="200")
+
+    except:
+        return Response(data="Erro ao retornar os times", status="404")
