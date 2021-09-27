@@ -25,6 +25,8 @@ class Jogador(models.Model):
     time = models.ForeignKey(Time, on_delete=models.DO_NOTHING, null=True)
     nome = models.CharField(max_length=50)
     posicao = models.CharField(max_length=25)
+    jogos = models.PositiveIntegerField(default=0)
+    gols = models.PositiveIntegerField(default=0)
 
 
 """Representação do Objeto Jogador no Swagger"""

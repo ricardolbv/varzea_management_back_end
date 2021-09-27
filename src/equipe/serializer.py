@@ -7,7 +7,7 @@ from .models import Capitao, Time, Jogador
 class JogadorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jogador
-        fields = ("id", "nome", "posicao")
+        fields = ("id", "nome", "posicao", "jogos", "gols")
 
 
 class TimeSerializer(serializers.ModelSerializer):
