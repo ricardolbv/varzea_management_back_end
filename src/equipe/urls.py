@@ -15,7 +15,7 @@ urlpatterns = [
     ),
     path("time/<str:key>", views.getTimeById, name="one-time"),
     path("jogador/<str:key>", views.getJogadorById, name="one-jogador"),
-    path("time/<str:key>/jogador", views.updateJogadorById, name="update-jogador"),
+    path("jogador/update/<str:key>", views.updateJogadorById, name="update-jogador"),
     path("jogador/delete/<str:key>", views.deleteJogadorById, name="delete-jogador"),
     path("time/times-dispo/<str:key>", views.getTimesParaJogar, name="get-times-dispo"),
 ]
