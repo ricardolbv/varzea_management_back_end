@@ -6,7 +6,8 @@ class Time(models.Model):
     nome = models.CharField(max_length=50, blank=True)
     local = models.CharField(max_length=50, blank=True)
     modalidade = models.CharField(max_length=50, blank=True)
-    data = models.DateField(blank=True)
+    data = models.CharField(max_length=50, blank=True)
+    vice_capitao = models.CharField(max_length=50, blank=True)
 
 
 """Representação do Objeto Equipe no Swagger"""
@@ -17,6 +18,9 @@ TimeAPIFields = openapi.Schema(
         "local": openapi.Schema(type=openapi.TYPE_STRING, blank=True, default=""),
         "modalidade": openapi.Schema(type=openapi.TYPE_STRING, blank=True, default=""),
         "data": openapi.Schema(type=openapi.TYPE_STRING, blank=True, default=""),
+        "vice_capitao": openapi.Schema(
+            type=openapi.TYPE_STRING, blank=True, default=""
+        ),
     },
 )
 
