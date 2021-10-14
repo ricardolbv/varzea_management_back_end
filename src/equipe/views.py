@@ -12,11 +12,13 @@ from .models import (
     Capitao,
     Time,
     Jogador,
+    Partida,
     CapitaoAPIFields,
     TimeAPIFields,
     JogadorAPIFields,
+    PartidaAPIFields,
 )
-from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer
+from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer, PartidaSerializer
 
 
 @swagger_auto_schema(
@@ -289,3 +291,43 @@ def getTimesParaJogar(request, key):
 
     except:
         return Response(data="Erro ao retornar os times", status="404")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Partida criada com sucesso",
+        404: "Time não encontrado",
+        400: "Erro ao criar jogo",
+    },
+    request_body=PartidaAPIFields,
+)
+@api_view(["POST"])
+def createPartida(request):
+    """Cria uma partida com base no id de dois times passados por pârametro"""
+    try:
+        time1 = Time.objects.get(id=request.data["idTime1"])
+        time2 = Time.objects.get(id=request.data["idTime2"])
+        
+    except:
+        return Response(data="Time inexistente", status="404")
+
+    partida = Partida.objects.create(
+        modalidade=request.data["modalidade"], mando=request.data["mando"],
+        dia=request.data["dia"], local=request.data["local"], aceite=request.data["aceite"]
+    )
+
+    #Adicionando equipes ao objeto
+    try:
+        partida.times.add(time1, time2)
+        serializer = PartidaSerializer(data=model_to_dict(partida))
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(data=serializer.data, status="200")
+
+        return Response(data=serializer.errors, status="400")
+
+    except Exception as err:
+        return Response(data=err, status="400")

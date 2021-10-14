@@ -1,7 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 
-from .models import Capitao, Time, Jogador
+from .models import Capitao, Time, Jogador, Partida
 
 
 class JogadorSerializer(serializers.ModelSerializer):
@@ -37,3 +37,20 @@ class CapitaoSerializer(serializers.ModelSerializer):
             "time",
         )
         depth = 1
+
+class PartidaSerializer(serializers.ModelSerializer):
+    #times = TimeSerializer(source='time_set', many=True)
+    times = TimeSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Partida
+        fields = (
+            "id",
+            "times",
+            "modalidade",
+            "mando",
+            "dia",
+            "local",
+            "aceite",
+        )
+
