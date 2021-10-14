@@ -1,4 +1,4 @@
-from django.db.models import fields
+from django.db.models import fields, query
 from rest_framework import serializers
 
 from .models import Capitao, Time, Jogador, Partida
@@ -10,12 +10,31 @@ class JogadorSerializer(serializers.ModelSerializer):
         fields = ("id", "nome", "posicao", "jogos", "gols")
 
 
+class PartidaSerializer(serializers.ModelSerializer):
+    #times = Time(read_only=True, many=True)
+    times = serializers.PrimaryKeyRelatedField(queryset=Time.objects.all(), many=True)
+
+    class Meta:
+        model = Partida
+        fields = (
+            "id",
+            "times",
+            "modalidade",
+            "mando",
+            "dia",
+            "local",
+            "aceite",
+        )
+
+
+
 class TimeSerializer(serializers.ModelSerializer):
     jogadores = JogadorSerializer(source="jogador_set", many=True, read_only=True)
+    partidas = PartidaSerializer(many=True, read_only=True)
 
     class Meta:
         model = Time
-        fields = ("id", "nome", "local", "modalidade", "data", "jogadores")
+        fields = ("id", "nome", "local", "modalidade", "data", "jogadores", "partidas")
 
 
 class CapitaoSerializer(serializers.ModelSerializer):
@@ -37,20 +56,4 @@ class CapitaoSerializer(serializers.ModelSerializer):
             "time",
         )
         depth = 1
-
-class PartidaSerializer(serializers.ModelSerializer):
-    #times = TimeSerializer(source='time_set', many=True)
-    times = TimeSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Partida
-        fields = (
-            "id",
-            "times",
-            "modalidade",
-            "mando",
-            "dia",
-            "local",
-            "aceite",
-        )
 
