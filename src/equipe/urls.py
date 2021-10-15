@@ -19,4 +19,5 @@ urlpatterns = [
     path("jogador/delete/<str:key>", views.deleteJogadorById, name="delete-jogador"),
     path("time/times-dispo/<str:key>", views.getTimesParaJogar, name="get-times-dispo"),
     path("partida", views.createPartida, name="create-partida"),
+    path("partida/<str:key>", views.getParidaByID, name="get-partida-id"),
 ]

@@ -327,7 +327,36 @@ def createPartida(request):
 
             return Response(data=serializer.data, status="200")
 
-        return Response(data=serializer.errors, status="400")
+        resp = Partida.objects.get(id=partida.id)
+        resp = PartidaSerializer(instance=resp)
+
+        return Response(data=resp.data, status="200")
 
     except Exception as err:
         return Response(data=err, status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna partida com sucesso",
+        404: "Erro ao retornar partida",
+        400: "Partida inexistente",
+    },
+)
+@api_view(["GET"])
+def getParidaByID(request, key):
+    """Retorna Partida por id"""
+    try:
+        resp = Partida.objects.get(id=key)
+
+    except:
+        return Response(data="Partida inexistente", status="400")
+
+    try:
+        serializer = PartidaSerializer(instance=resp)
+
+        return Response(data=serializer.data, status="200")
+
+    except:
+        return Response(data="Erro ao retornar partida", status="404")
