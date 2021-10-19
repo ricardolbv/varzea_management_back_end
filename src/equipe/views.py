@@ -12,11 +12,14 @@ from .models import (
     Capitao,
     Time,
     Jogador,
+    Partida,
     CapitaoAPIFields,
     TimeAPIFields,
     JogadorAPIFields,
+    PartidaAPIFields,
+    UpdatePartidaAPIFields,
 )
-from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer
+from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer, PartidaSerializer
 
 
 @swagger_auto_schema(
@@ -289,3 +292,102 @@ def getTimesParaJogar(request, key):
 
     except:
         return Response(data="Erro ao retornar os times", status="404")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Partida criada com sucesso",
+        404: "Time não encontrado",
+        400: "Erro ao criar jogo",
+    },
+    request_body=PartidaAPIFields,
+)
+@api_view(["POST"])
+def createPartida(request):
+    """Cria uma partida com base no id de dois times passados por pârametro"""
+    try:
+        time1 = Time.objects.get(id=request.data["idTime1"])
+        time2 = Time.objects.get(id=request.data["idTime2"])
+        
+    except:
+        return Response(data="Time inexistente", status="404")
+
+    partida = Partida.objects.create(
+        id_mando=request.data["idTime1"],
+        modalidade=request.data["modalidade"],
+        dia=request.data["dia"], local=request.data["local"], aceite=request.data["aceite"]
+    )
+
+    #Adicionando equipes ao objeto
+    try:
+        partida.times.add(time1, time2)
+        serializer = PartidaSerializer(data=model_to_dict(partida))
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(data=serializer.data, status="200")
+
+        resp = Partida.objects.get(id=partida.id)
+        resp = PartidaSerializer(instance=resp)
+
+        return Response(data=resp.data, status="200")
+
+    except Exception as err:
+        return Response(data=err, status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna partida com sucesso",
+        404: "Erro ao retornar partida",
+        400: "Partida inexistente",
+    },
+)
+@api_view(["GET"])
+def getParidaByID(request, key):
+    """Retorna Partida por id"""
+    try:
+        resp = Partida.objects.get(id=key)
+
+    except:
+        return Response(data="Partida inexistente", status="400")
+
+    try:
+        serializer = PartidaSerializer(instance=resp)
+        print(serializer.data['times'])
+
+        return Response(data=serializer.data, status="200")
+
+    except:
+        return Response(data="Erro ao retornar partida", status="404")
+
+
+@swagger_auto_schema(
+    methods=["put"],
+    responses={
+        200: "Partida atualizada com sucesso",
+        404: "Partida não encontrada",
+        400: "Erro ao atualizar Partida",
+    },
+    request_body=UpdatePartidaAPIFields,
+)
+@api_view(["PUT"])
+def updatePartidaById(request, key):
+    """Atualiza a partida com base no id"""
+    try:
+        partida = Partida.objects.get(id=key)
+    except:
+        return Response(data="Partida inexistente", status="404")
+
+    serializer = PartidaSerializer(partida, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(data=serializer.data, status="200")
+
+    return Response(data=serializer.errors, status="400")
+

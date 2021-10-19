@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_swagger",
     "rest_framework",
-    "campeonato",
     "equipe",
 ]
 
@@ -91,7 +90,7 @@ DATABASES = {
         "ENGINE": "mssql",
         "NAME": "varzeapp_prod_um",
         "USER": "root",
-        "PASSWORD": "123",
+        "PASSWORD": "321",
         "HOST": "127.0.0.1",
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
