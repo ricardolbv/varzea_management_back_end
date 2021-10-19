@@ -17,10 +17,10 @@ class PartidaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partida
         fields = (
+            "id_mando",
             "id",
             "times",
             "modalidade",
-            "mando",
             "dia",
             "local",
             "aceite",

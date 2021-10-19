@@ -17,6 +17,7 @@ from .models import (
     TimeAPIFields,
     JogadorAPIFields,
     PartidaAPIFields,
+    UpdatePartidaAPIFields,
 )
 from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer, PartidaSerializer
 
@@ -313,7 +314,8 @@ def createPartida(request):
         return Response(data="Time inexistente", status="404")
 
     partida = Partida.objects.create(
-        modalidade=request.data["modalidade"], mando=request.data["mando"],
+        id_mando=request.data["idTime1"],
+        modalidade=request.data["modalidade"],
         dia=request.data["dia"], local=request.data["local"], aceite=request.data["aceite"]
     )
 
@@ -355,8 +357,37 @@ def getParidaByID(request, key):
 
     try:
         serializer = PartidaSerializer(instance=resp)
+        print(serializer.data['times'])
 
         return Response(data=serializer.data, status="200")
 
     except:
         return Response(data="Erro ao retornar partida", status="404")
+
+
+@swagger_auto_schema(
+    methods=["put"],
+    responses={
+        200: "Partida atualizada com sucesso",
+        404: "Partida não encontrada",
+        400: "Erro ao atualizar Partida",
+    },
+    request_body=UpdatePartidaAPIFields,
+)
+@api_view(["PUT"])
+def updatePartidaById(request, key):
+    """Atualiza a partida com base no id"""
+    try:
+        partida = Partida.objects.get(id=key)
+    except:
+        return Response(data="Partida inexistente", status="404")
+
+    serializer = PartidaSerializer(partida, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(data=serializer.data, status="200")
+
+    return Response(data=serializer.errors, status="400")
+

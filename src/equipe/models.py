@@ -78,10 +78,10 @@ CapitaoAPIFields = openapi.Schema(
 class Partida(models.Model):
     times = models.ManyToManyField("Time", related_name="partidas")
     modalidade = models.CharField(max_length=25)
-    mando = models.CharField(max_length=25)
     dia = models.CharField(max_length=25)
     local = models.CharField(max_length=50)
-    aceite = models.BooleanField()
+    aceite = models.CharField(max_length=25, default="Aguardando")
+    id_mando = models.IntegerField()
 
 """Representação do Objeto Partida no Swagger"""
 PartidaAPIFields = openapi.Schema(
@@ -90,10 +90,17 @@ PartidaAPIFields = openapi.Schema(
         "idTime1": openapi.Schema(type=openapi.TYPE_INTEGER, blank=False, default=""),
         "idTime2": openapi.Schema(type=openapi.TYPE_INTEGER, blank=False, default=""),
         "modalidade": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
-        "mando": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "dia": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "local": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
-        "aceite": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=False),
+        "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+    },
+)
+
+"""Representação do Objeto Partida no Swagger"""
+UpdatePartidaAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
     },
 )
 
