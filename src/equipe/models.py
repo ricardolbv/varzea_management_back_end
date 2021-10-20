@@ -44,7 +44,7 @@ JogadorAPIFields = openapi.Schema(
 
 
 class Capitao(models.Model):
-    email = models.CharField(max_length=50, unique=True)
+    email = models.CharField(max_length=50)
     nome = models.CharField(max_length=50)
     telefone = models.CharField(max_length=25)
     estado = models.CharField(max_length=40)
