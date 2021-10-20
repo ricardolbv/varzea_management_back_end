@@ -48,14 +48,10 @@ def createCaptao(request):
 
         new_capitao = Capitao.objects.create(
             nome=request.data["nome"],
-            cpf=request.data["cpf"],
             telefone=request.data["telefone"],
-            endereco=request.data["endereco"],
-            numero=request.data["numero"],
-            complemento=request.data["complemento"],
-            cidade=request.data["cidade"],
             estado=request.data["estado"],
-            cep=request.data["cep"],
+            psw=request.data["psw"],
+            email=request.data["email"],
             time=new_time,
         )
 
@@ -390,4 +386,23 @@ def updatePartidaById(request, key):
         return Response(data=serializer.data, status="200")
 
     return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Capitaes deletados",
+        400: "Erro ao excluir Capitães",
+    },
+)
+@api_view(["POST"])
+def deleteAllCaptains(request):
+    """Exclui todos os capitães do sistema"""
+    try:
+        Capitao.objects.all().delete()
+
+        return Response(data={'Sucesso. Todos os capitães foram deletados'}, status="200")
+
+    except:
+        return Response(data="Erro ao deletar", status="404")
 

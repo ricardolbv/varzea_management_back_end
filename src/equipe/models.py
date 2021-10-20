@@ -44,15 +44,11 @@ JogadorAPIFields = openapi.Schema(
 
 
 class Capitao(models.Model):
+    email = models.CharField(max_length=50, unique=True)
     nome = models.CharField(max_length=50)
-    cpf = models.CharField(max_length=25)
     telefone = models.CharField(max_length=25)
-    endereco = models.CharField(max_length=35)
-    numero = models.IntegerField()
-    complemento = models.CharField(max_length=35, blank=True)
-    cidade = models.CharField(max_length=45)
     estado = models.CharField(max_length=40)
-    cep = models.CharField(max_length=40)
+    psw = models.CharField(max_length=40, default='123456')
     time = models.OneToOneField(
         Time, on_delete=models.CASCADE
     )  # Chave estrangeira não pode ser null
@@ -63,14 +59,10 @@ CapitaoAPIFields = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         "nome": openapi.Schema(type=openapi.TYPE_STRING),
-        "cpf": openapi.Schema(type=openapi.TYPE_STRING),
+        "email": openapi.Schema(type=openapi.TYPE_STRING,),
         "telefone": openapi.Schema(type=openapi.TYPE_STRING),
-        "endereco": openapi.Schema(type=openapi.TYPE_STRING),
-        "numero": openapi.Schema(type=openapi.TYPE_INTEGER),
-        "complemento": openapi.Schema(type=openapi.TYPE_STRING),
-        "cidade": openapi.Schema(type=openapi.TYPE_STRING),
         "estado": openapi.Schema(type=openapi.TYPE_STRING),
-        "cep": openapi.Schema(type=openapi.TYPE_STRING),
+        "psw": openapi.Schema(type=openapi.TYPE_STRING),
         "time": TimeAPIFields,
     },
 )

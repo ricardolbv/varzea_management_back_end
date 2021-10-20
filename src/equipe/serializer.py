@@ -44,15 +44,11 @@ class CapitaoSerializer(serializers.ModelSerializer):
         model = Capitao
         fields = (
             "id",
+            "email",
             "nome",
-            "cpf",
             "telefone",
-            "endereco",
-            "numero",
-            "complemento",
-            "cidade",
             "estado",
-            "cep",
+            "psw",
             "time",
         )
         depth = 1
