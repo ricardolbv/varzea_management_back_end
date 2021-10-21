@@ -14,6 +14,7 @@ from .models import (
     Jogador,
     Partida,
     CapitaoAPIFields,
+    LoginCapitaoAPIFields,
     TimeAPIFields,
     JogadorAPIFields,
     PartidaAPIFields,
@@ -405,4 +406,33 @@ def deleteAllCaptains(request):
 
     except:
         return Response(data="Erro ao deletar", status="404")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Capitão logado",
+        404: "Erro de credencial",
+        400: "Capitão inexistente",
+    },
+    request_body=LoginCapitaoAPIFields
+)
+@api_view(["POST"])
+def login(request):
+    """Loga no sistema com base no email e senha"""
+    try:
+        resp = Capitao.objects.get(email=request.data['email'])
+        serializer = CapitaoSerializer(resp, many=False)
+
+        if not serializer.data.__len__:
+            return Response(data="Capitão inexistente", status="400")
+
+        cpt = model_to_dict(resp)
+        if(cpt['psw'] == request.data['psw']):
+            return Response(data=serializer.data, status="200")
+
+        return Response(data="Erro de credencial", status="404")
+
+    except:
+        return Response(data="Erro", status="500")
 

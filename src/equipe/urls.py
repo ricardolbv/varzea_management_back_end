@@ -21,5 +21,6 @@ urlpatterns = [
     path("partida", views.createPartida, name="create-partida"),
     path("partida/<str:key>", views.getParidaByID, name="get-partida-id"),
     path("partida/update/<str:key>", views.updatePartidaById, name="update-partida-id"),
-    path("capitaes/delete", views.deleteAllCaptains, name="delete-captains")
+    path("capitaes/delete", views.deleteAllCaptains, name="delete-captains"),
+    path("auth", views.login, name="login"),
 ]

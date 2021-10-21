@@ -67,6 +67,15 @@ CapitaoAPIFields = openapi.Schema(
     },
 )
 
+"""Representação do Objeto Capitão no Swagger"""
+LoginCapitaoAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "email": openapi.Schema(type=openapi.TYPE_STRING,),
+        "psw": openapi.Schema(type=openapi.TYPE_STRING),
+    },
+)
+
 class Partida(models.Model):
     times = models.ManyToManyField("Time", related_name="partidas")
     modalidade = models.CharField(max_length=25)
