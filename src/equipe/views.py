@@ -380,6 +380,7 @@ def updatePartidaById(request, key):
         return Response(data="Partida inexistente", status="404")
 
     serializer = PartidaSerializer(partida, data=request.data, partial=True)
+    print(serializer)
 
     if serializer.is_valid():
         serializer.save()

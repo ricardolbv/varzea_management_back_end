@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.related import OneToOneField
 from drf_yasg import openapi
 
 
@@ -104,5 +105,24 @@ UpdatePartidaAPIFields = openapi.Schema(
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
     },
 )
+
+class Sumula(models.Model):
+    resultado = models.IntegerField() # 1 - Empate, 2 - Vitoria visitante, 3 - Vitoria mandante
+    aceite = models.CharField(max_length=25, default="")
+    status = models.CharField(max_length=25, default="")
+
+class Gol(models.Model):
+    jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
+    quantidade = models.IntegerField()
+    autor = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+
+class Cartao(models.Model):
+    jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
+    tipo = models.CharField(max_length=25, default="")
+    jogador = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+    
+
+
+    
 
 
