@@ -9,18 +9,23 @@ from django.forms.models import model_to_dict
 from datetime import datetime
 
 from .models import (
-    Capitao,
-    Time,
-    Jogador,
-    Partida,
+    Capitao, Sumula,
+    Time, Jogador,
+    Partida, Gol, Cartao,
     CapitaoAPIFields,
     LoginCapitaoAPIFields,
     TimeAPIFields,
     JogadorAPIFields,
     PartidaAPIFields,
     UpdatePartidaAPIFields,
+    UpdateSumulaAPIFields,
+    GolAPIFields,
 )
-from .serializer import CapitaoSerializer, TimeSerializer, JogadorSerializer, PartidaSerializer
+from .serializer import (
+    CapitaoSerializer, TimeSerializer, 
+    JogadorSerializer, PartidaSerializer, 
+    SumulaSerializer, GolSerializer,
+    CartaoSerializer) 
 
 
 @swagger_auto_schema(
@@ -380,10 +385,24 @@ def updatePartidaById(request, key):
         return Response(data="Partida inexistente", status="404")
 
     serializer = PartidaSerializer(partida, data=request.data, partial=True)
-    print(serializer)
 
     if serializer.is_valid():
         serializer.save()
+
+        # Caso aceito o jogo, eu gero uma sumula
+        if (request.data['aceite'] == 'Aceito'):
+            new_sumula = Sumula.objects.create(
+                resultado=0, 
+                aceite='Aguardando', 
+                partida=partida)
+
+            _serializer = SumulaSerializer(data=model_to_dict(new_sumula))
+
+        if _serializer.is_valid():
+            try:
+                _serializer.save()
+            except:
+               pass
 
         return Response(data=serializer.data, status="200")
 
@@ -437,3 +456,122 @@ def login(request):
     except:
         return Response(data="Erro", status="500")
 
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna todos as sumulas dos sistemas",
+        400: "Erro ao retornar todos as sumulas",
+    },
+)
+@api_view(["GET"])
+def allSumulas(request):
+    """Retorna todos as sumulas"""
+    try:
+        allSumulas = Sumula.objects.all()
+        serializer = SumulaSerializer(allSumulas, many=True)
+        return Response(data=serializer.data, status="200")
+    except:
+        return Response(data="Erro ao retornar todas as sumulas", status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna sumula com sucesso",
+        404: "Erro ao retornar sumula",
+        400: "Sumula inexistente",
+    },
+)
+@api_view(["GET"])
+def getSumulaByIDPartida(request, key):
+    """Retorna Sumula por id de partida"""
+    try:
+        resp = Sumula.objects.all()
+        _resp = ''
+
+        for sumula in resp:
+            if int(sumula.partida.id) == int(key):
+                _resp = sumula
+
+        if (_resp == ''):
+            return Response(data="Partida inexistente", status="400")
+
+    except:
+        return Response(data="Partida inexistente", status="400")
+
+    try:
+        serializer = SumulaSerializer(instance=_resp)
+
+        return Response(data=serializer.data, status="200")
+
+    except:
+        return Response(data="Erro ao retornar sumula", status="404")
+
+
+@swagger_auto_schema(
+    methods=["put"],
+    responses={
+        200: "Sumula atualizada com sucesso",
+        404: "Sumula não encontrada",
+        400: "Erro ao atualizar Sumula",
+    },
+    request_body=UpdateSumulaAPIFields,
+)
+@api_view(["PUT"])
+def updateSumulaById(request, key):
+    """Atualiza a partida com base no id"""
+    try:
+        sumula = Sumula.objects.get(id=key)
+    except:
+        return Response(data="Sumula inexistente", status="404")
+
+    serializer = SumulaSerializer(sumula, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+
+        # Caso aceito a sumula, atualizo o vencedor do jogo
+        if (request.data['aceite'] == 'Aceito'):
+            pass
+
+        return Response(data=serializer.data, status="200")
+
+    return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Gol criado com sucesso",
+        404: "Sumula não encontrada",
+        400: "Erro ao atualizar Sumula",
+    },
+    request_body=GolAPIFields,
+)
+@api_view(["POST"])
+def createGoalOnIDSumula(request, key):
+    """Cria um Gol com base no ID da Sumula passada"""
+    try:
+        sumula = Sumula.objects.get(id=key)
+        jogador = Jogador.objects.get(id=request.data["autor"])
+
+    except:
+        return Response(data="Sumula inexistente", status="404")
+
+
+    gol = Gol.objects.create(
+        quantidade=request.data["quantidade"], autor=jogador, jogo=sumula
+    )
+
+    serializer = GolSerializer(data=model_to_dict(gol))
+
+    try:
+        if serializer.is_valid():
+            serializer.save()
+                    
+            return Response(data=serializer.data, status="200")
+    except:
+        return Response(data={'Gol registrado com sucesso'}, status=200)
+
+    return Response(data=serializer.errors, status="400")

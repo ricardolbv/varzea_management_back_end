@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.fields.related import OneToOneField
 from drf_yasg import openapi
 
 
@@ -107,9 +106,28 @@ UpdatePartidaAPIFields = openapi.Schema(
 )
 
 class Sumula(models.Model):
+    partida = models.OneToOneField(Partida, on_delete=models.DO_NOTHING)
     resultado = models.IntegerField() # 1 - Empate, 2 - Vitoria visitante, 3 - Vitoria mandante
     aceite = models.CharField(max_length=25, default="")
     status = models.CharField(max_length=25, default="")
+
+"""Representação do Objeto Sumula no Swagger"""
+UpdateSumulaAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+    },
+)
+
+
+"""Representação do Objeto Gol no Swagger"""
+GolAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "quantidade": openapi.Schema(type=openapi.TYPE_INTEGER),
+        "autor": openapi.Schema(type=openapi.TYPE_INTEGER),
+    },
+)
 
 class Gol(models.Model):
     jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)

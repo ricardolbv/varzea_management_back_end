@@ -1,7 +1,7 @@
 from django.db.models import fields, query
 from rest_framework import serializers
 
-from .models import Capitao, Time, Jogador, Partida
+from .models import Capitao, Time, Jogador, Partida, Sumula, Gol, Cartao
 
 
 class JogadorSerializer(serializers.ModelSerializer):
@@ -11,7 +11,6 @@ class JogadorSerializer(serializers.ModelSerializer):
 
 
 class PartidaSerializer(serializers.ModelSerializer):
-    #times = Time(read_only=True, many=True)
     times = serializers.PrimaryKeyRelatedField(queryset=Time.objects.all(), many=True)
 
     class Meta:
@@ -53,3 +52,43 @@ class CapitaoSerializer(serializers.ModelSerializer):
         )
         depth = 1
 
+
+class GolSerializer(serializers.ModelSerializer):
+    autor = JogadorSerializer(read_only=True, many=False)
+    
+    class Meta:
+        model = Gol
+        fields = (
+            "id",
+            "autor",
+            "quantidade",
+        )
+
+class CartaoSerializer(serializers.ModelSerializer):
+    jogador = JogadorSerializer(read_only=True, many=False)
+    
+    class Meta:
+        model = Cartao
+        fields = (
+            "id",
+            "tipo",
+            "jogador",
+        )
+
+class SumulaSerializer(serializers.ModelSerializer):
+    partida = PartidaSerializer(read_only=True, many=False)
+    gols = GolSerializer(source="gol_set", many=True, read_only=True)
+    cartoes = CartaoSerializer(source="cartao_set", many=True, read_only=True)
+
+    class Meta:
+        model = Sumula
+        fields = (
+            "id",
+            "resultado",
+            "aceite",
+            "status",
+            "partida",
+            "gols",
+            "cartoes",
+        )
+        depth = 1
