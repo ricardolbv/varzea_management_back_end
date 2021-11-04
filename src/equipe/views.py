@@ -20,6 +20,7 @@ from .models import (
     UpdatePartidaAPIFields,
     UpdateSumulaAPIFields,
     GolAPIFields,
+    CartaoAPIFields,
 )
 from .serializer import (
     CapitaoSerializer, TimeSerializer, 
@@ -573,5 +574,42 @@ def createGoalOnIDSumula(request, key):
             return Response(data=serializer.data, status="200")
     except:
         return Response(data={'Gol registrado com sucesso'}, status=200)
+
+    return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["post"],
+    responses={
+        200: "Cartão criado com sucesso",
+        404: "Sumula não encontrada",
+        400: "Erro ao atualizar Sumula",
+    },
+    request_body=CartaoAPIFields,
+)
+@api_view(["POST"])
+def createCardOnIDSumula(request, key):
+    """Cria um Cartão com base no ID da Sumula passada"""
+    try:
+        sumula = Sumula.objects.get(id=key)
+        jogador = Jogador.objects.get(id=request.data["jogador"])
+
+    except:
+        return Response(data="Sumula inexistente", status="404")
+
+
+    cartao = Cartao.objects.create(
+        tipo=request.data["tipo"], jogador=jogador, jogo=sumula
+    )
+
+    serializer = CartaoSerializer(data=model_to_dict(cartao))
+
+    try:
+        if serializer.is_valid():
+            serializer.save()
+                    
+            return Response(data=serializer.data, status="200")
+    except:
+        return Response(data={'Cartão registrado com sucesso'}, status=200)
 
     return Response(data=serializer.errors, status="400")

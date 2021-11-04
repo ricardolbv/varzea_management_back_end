@@ -134,6 +134,15 @@ class Gol(models.Model):
     quantidade = models.IntegerField()
     autor = models.OneToOneField(Jogador, on_delete=models.CASCADE)
 
+"""Representação do Objeto Cartão no Swagger"""
+CartaoAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "tipo": openapi.Schema(type=openapi.TYPE_STRING),
+        "jogador": openapi.Schema(type=openapi.TYPE_INTEGER),
+    },
+)
+
 class Cartao(models.Model):
     jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
     tipo = models.CharField(max_length=25, default="")

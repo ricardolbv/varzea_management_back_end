@@ -27,4 +27,5 @@ urlpatterns = [
     path("sumula/<str:key>/partida", views.getSumulaByIDPartida, name="one-sumula"),
     path("sumula/update/<str:key>", views.updateSumulaById, name="update-sumula"),
     path("gol/create/sumula/<str:key>", views.createGoalOnIDSumula, name="goal-create"),
+    path("cartao/create/sumula/<str:key>", views.createCardOnIDSumula, name="card-create"),
 ]
