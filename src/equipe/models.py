@@ -83,6 +83,7 @@ class Partida(models.Model):
     local = models.CharField(max_length=50)
     aceite = models.CharField(max_length=25, default="Aguardando")
     id_mando = models.IntegerField()
+    resultado = models.CharField(max_length=25, default="")
 
 """Representação do Objeto Partida no Swagger"""
 PartidaAPIFields = openapi.Schema(
@@ -94,6 +95,8 @@ PartidaAPIFields = openapi.Schema(
         "dia": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "local": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "id_mando": openapi.Schema(type=openapi.TYPE_INTEGER, blank=False),
+        "resultado": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
     },
 )
 
@@ -102,6 +105,7 @@ UpdatePartidaAPIFields = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "resultado": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
     },
 )
 
@@ -110,12 +114,16 @@ class Sumula(models.Model):
     resultado = models.IntegerField() # 1 - Empate, 2 - Vitoria visitante, 3 - Vitoria mandante
     aceite = models.CharField(max_length=25, default="")
     status = models.CharField(max_length=25, default="")
+    aceiteMandante = models.BooleanField(default=False)
+    aceiteDesafiado = models.BooleanField(default=False)
 
 """Representação do Objeto Sumula no Swagger"""
 UpdateSumulaAPIFields = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "aceiteMandante": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
+        "aceiteDesafiado": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
     },
 )
 

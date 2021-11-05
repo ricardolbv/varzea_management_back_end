@@ -23,6 +23,7 @@ class PartidaSerializer(serializers.ModelSerializer):
             "dia",
             "local",
             "aceite",
+            "resultado",
         )
 
 
@@ -90,5 +91,7 @@ class SumulaSerializer(serializers.ModelSerializer):
             "partida",
             "gols",
             "cartoes",
+            "aceiteMandante",
+            "aceiteDesafiado"
         )
         depth = 1

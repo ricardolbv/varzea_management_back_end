@@ -395,7 +395,10 @@ def updatePartidaById(request, key):
             new_sumula = Sumula.objects.create(
                 resultado=0, 
                 aceite='Aguardando', 
-                partida=partida)
+                partida=partida,
+                status='criado',
+                aceiteMandante=False,
+                aceiteDesafiado=False)
 
             _serializer = SumulaSerializer(data=model_to_dict(new_sumula))
 
