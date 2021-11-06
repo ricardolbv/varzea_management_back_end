@@ -44,15 +44,11 @@ JogadorAPIFields = openapi.Schema(
 
 
 class Capitao(models.Model):
+    email = models.CharField(max_length=50)
     nome = models.CharField(max_length=50)
-    cpf = models.CharField(max_length=25)
     telefone = models.CharField(max_length=25)
-    endereco = models.CharField(max_length=35)
-    numero = models.IntegerField()
-    complemento = models.CharField(max_length=35, blank=True)
-    cidade = models.CharField(max_length=45)
     estado = models.CharField(max_length=40)
-    cep = models.CharField(max_length=40)
+    psw = models.CharField(max_length=40, default='123456')
     time = models.OneToOneField(
         Time, on_delete=models.CASCADE
     )  # Chave estrangeira não pode ser null
@@ -63,15 +59,20 @@ CapitaoAPIFields = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         "nome": openapi.Schema(type=openapi.TYPE_STRING),
-        "cpf": openapi.Schema(type=openapi.TYPE_STRING),
+        "email": openapi.Schema(type=openapi.TYPE_STRING,),
         "telefone": openapi.Schema(type=openapi.TYPE_STRING),
-        "endereco": openapi.Schema(type=openapi.TYPE_STRING),
-        "numero": openapi.Schema(type=openapi.TYPE_INTEGER),
-        "complemento": openapi.Schema(type=openapi.TYPE_STRING),
-        "cidade": openapi.Schema(type=openapi.TYPE_STRING),
         "estado": openapi.Schema(type=openapi.TYPE_STRING),
-        "cep": openapi.Schema(type=openapi.TYPE_STRING),
+        "psw": openapi.Schema(type=openapi.TYPE_STRING),
         "time": TimeAPIFields,
+    },
+)
+
+"""Representação do Objeto Capitão no Swagger"""
+LoginCapitaoAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "email": openapi.Schema(type=openapi.TYPE_STRING,),
+        "psw": openapi.Schema(type=openapi.TYPE_STRING),
     },
 )
 
@@ -82,6 +83,7 @@ class Partida(models.Model):
     local = models.CharField(max_length=50)
     aceite = models.CharField(max_length=25, default="Aguardando")
     id_mando = models.IntegerField()
+    resultado = models.CharField(max_length=25, default="")
 
 """Representação do Objeto Partida no Swagger"""
 PartidaAPIFields = openapi.Schema(
@@ -93,6 +95,8 @@ PartidaAPIFields = openapi.Schema(
         "dia": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "local": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "id_mando": openapi.Schema(type=openapi.TYPE_INTEGER, blank=False),
+        "resultado": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
     },
 )
 
@@ -101,7 +105,60 @@ UpdatePartidaAPIFields = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "resultado": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default=""),
     },
 )
+
+class Sumula(models.Model):
+    partida = models.OneToOneField(Partida, on_delete=models.DO_NOTHING)
+    resultado = models.IntegerField() # 1 - Empate, 2 - Vitoria visitante, 3 - Vitoria mandante
+    aceite = models.CharField(max_length=25, default="")
+    status = models.CharField(max_length=25, default="")
+    aceiteMandante = models.BooleanField(default=False)
+    aceiteDesafiado = models.BooleanField(default=False)
+
+"""Representação do Objeto Sumula no Swagger"""
+UpdateSumulaAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
+        "aceiteMandante": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
+        "aceiteDesafiado": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
+        "status": openapi.Schema(type=openapi.TYPE_STRING, blank=False),
+    },
+)
+
+
+"""Representação do Objeto Gol no Swagger"""
+GolAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "quantidade": openapi.Schema(type=openapi.TYPE_INTEGER),
+        "autor": openapi.Schema(type=openapi.TYPE_INTEGER),
+    },
+)
+
+class Gol(models.Model):
+    jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
+    quantidade = models.IntegerField()
+    autor = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+
+"""Representação do Objeto Cartão no Swagger"""
+CartaoAPIFields = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        "tipo": openapi.Schema(type=openapi.TYPE_STRING),
+        "jogador": openapi.Schema(type=openapi.TYPE_INTEGER),
+    },
+)
+
+class Cartao(models.Model):
+    jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
+    tipo = models.CharField(max_length=25, default="")
+    jogador = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+    
+
+
+    
 
 
