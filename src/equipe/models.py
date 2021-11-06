@@ -124,6 +124,7 @@ UpdateSumulaAPIFields = openapi.Schema(
         "aceite": openapi.Schema(type=openapi.TYPE_STRING, blank=False, default="Aguardando"),
         "aceiteMandante": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
         "aceiteDesafiado": openapi.Schema(type=openapi.TYPE_BOOLEAN, blank=False, default=True),
+        "status": openapi.Schema(type=openapi.TYPE_STRING, blank=False),
     },
 )
 

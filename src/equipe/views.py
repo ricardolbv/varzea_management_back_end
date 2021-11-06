@@ -536,8 +536,8 @@ def updateSumulaById(request, key):
         serializer.save()
 
         # Caso aceito a sumula, atualizo o vencedor do jogo
-        if (request.data['aceite'] == 'Aceito'):
-            pass
+        #if (request.data['aceite'] == 'Aceito'):
+        #    pass
 
         return Response(data=serializer.data, status="200")
 
