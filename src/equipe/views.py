@@ -635,3 +635,51 @@ def allGoals(request):
         return Response(data=serializer.data, status="200")
     except:
         return Response(data="Erro ao retornar todos os Gols", status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna sumula com sucesso",
+        404: "Erro ao retornar sumula",
+        400: "Sumula inexistente",
+    },
+)
+@api_view(["GET"])
+def getGolsByIDPartida(request, key):
+    """Retorna gols por ID de partida"""
+    try:
+        resp = Sumula.objects.all()
+        _resp = ''
+
+        for sumula in resp:
+            if int(sumula.partida.id) == int(key):
+                _resp = sumula
+
+        if (_resp == ''):
+            return Response(data="Partida inexistente", status="400")
+
+    except:
+        return Response(data="Partida inexistente", status="400")
+
+    try:
+        serializer = SumulaSerializer(instance=_resp)
+        
+        homeGoals = 0
+        awayGoals = 0
+        homeGoalsPlayers = []
+        awayGoalsPlayers = []
+
+        
+        for gol in serializer.data['gols']:
+            if (gol['golPara'] == 'Home'):
+                homeGoals += gol['quantidade']
+                homeGoalsPlayers.append({'autor': gol['autor']['nome'], 'quantidade': gol['quantidade']})
+            else:
+                awayGoals += gol['quantidade']
+                awayGoalsPlayers.append({'autor': gol['autor']['nome'], 'quantidade': gol['quantidade']})
+
+        return Response(data={'homeGoals': homeGoals, 'awayGoals': awayGoals, 'homeGoalsPlayers': homeGoalsPlayers, 'awayGoalsPlayers': awayGoalsPlayers}, status="200")
+
+    except:
+        return Response(data="Erro ao retornar sumula", status="404")

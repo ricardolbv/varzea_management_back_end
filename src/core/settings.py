@@ -88,7 +88,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "mssql",
-        "NAME": "varzeaapp_dois_prod",
+        "NAME": "varzea_prod_final_dois",
         "USER": "root",
         "PASSWORD": "123",
         "HOST": "127.0.0.1",

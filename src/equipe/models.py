@@ -141,7 +141,7 @@ GolAPIFields = openapi.Schema(
 class Gol(models.Model):
     jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
     quantidade = models.IntegerField()
-    autor = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+    autor = models.ForeignKey(Jogador, on_delete=models.CASCADE)
     golPara = models.CharField(max_length=25, default="")
 
 """Representação do Objeto Cartão no Swagger"""
@@ -157,7 +157,7 @@ CartaoAPIFields = openapi.Schema(
 class Cartao(models.Model):
     jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
     tipo = models.CharField(max_length=25, default="")
-    jogador = models.OneToOneField(Jogador, on_delete=models.CASCADE)
+    jogador = models.ForeignKey(Jogador, on_delete=models.CASCADE)
     
 
 
