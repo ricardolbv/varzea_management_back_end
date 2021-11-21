@@ -565,8 +565,9 @@ def createGoalOnIDSumula(request, key):
 
 
     gol = Gol.objects.create(
-        quantidade=request.data["quantidade"], autor=jogador, jogo=sumula
-    )
+        quantidade=request.data["quantidade"], autor=jogador, jogo=sumula,  
+        golPara=request.data["golPara"]
+        )
 
     serializer = GolSerializer(data=model_to_dict(gol))
 
@@ -616,3 +617,21 @@ def createCardOnIDSumula(request, key):
         return Response(data={'Cartão registrado com sucesso'}, status=200)
 
     return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna todos os Gols",
+        400: "Erro ao retornar todos os Gols",
+    },
+)
+@api_view(["GET"])
+def allGoals(request):
+    """Retorna todos os gols criados"""
+    try:
+        allGoals = Gol.objects.all()
+        serializer = GolSerializer(allGoals, many=True)
+        return Response(data=serializer.data, status="200")
+    except:
+        return Response(data="Erro ao retornar todos os Gols", status="400")

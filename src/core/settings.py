@@ -90,7 +90,7 @@ DATABASES = {
         "ENGINE": "mssql",
         "NAME": "varzeaapp_dois_prod",
         "USER": "root",
-        "PASSWORD": "321",
+        "PASSWORD": "123",
         "HOST": "127.0.0.1",
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
