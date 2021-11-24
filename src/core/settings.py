@@ -88,9 +88,9 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "mssql",
-        "NAME": "varzeaapp_dois_prod",
+        "NAME": "varzea_prod_final_tres",
         "USER": "root",
-        "PASSWORD": "321",
+        "PASSWORD": "123",
         "HOST": "127.0.0.1",
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",

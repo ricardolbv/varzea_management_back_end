@@ -63,6 +63,7 @@ class GolSerializer(serializers.ModelSerializer):
             "id",
             "autor",
             "quantidade",
+            "golPara",
         )
 
 class CartaoSerializer(serializers.ModelSerializer):
@@ -74,6 +75,7 @@ class CartaoSerializer(serializers.ModelSerializer):
             "id",
             "tipo",
             "jogador",
+            "time",
         )
 
 class SumulaSerializer(serializers.ModelSerializer):

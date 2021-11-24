@@ -565,8 +565,9 @@ def createGoalOnIDSumula(request, key):
 
 
     gol = Gol.objects.create(
-        quantidade=request.data["quantidade"], autor=jogador, jogo=sumula
-    )
+        quantidade=request.data["quantidade"], autor=jogador, jogo=sumula,  
+        golPara=request.data["golPara"]
+        )
 
     serializer = GolSerializer(data=model_to_dict(gol))
 
@@ -602,7 +603,8 @@ def createCardOnIDSumula(request, key):
 
 
     cartao = Cartao.objects.create(
-        tipo=request.data["tipo"], jogador=jogador, jogo=sumula
+        tipo=request.data["tipo"], jogador=jogador, jogo=sumula,
+        time=request.data["time"]
     )
 
     serializer = CartaoSerializer(data=model_to_dict(cartao))
@@ -616,3 +618,78 @@ def createCardOnIDSumula(request, key):
         return Response(data={'Cartão registrado com sucesso'}, status=200)
 
     return Response(data=serializer.errors, status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna todos os Gols",
+        400: "Erro ao retornar todos os Gols",
+    },
+)
+@api_view(["GET"])
+def allGoals(request):
+    """Retorna todos os gols criados"""
+    try:
+        allGoals = Gol.objects.all()
+        serializer = GolSerializer(allGoals, many=True)
+        return Response(data=serializer.data, status="200")
+    except:
+        return Response(data="Erro ao retornar todos os Gols", status="400")
+
+
+@swagger_auto_schema(
+    methods=["get"],
+    responses={
+        200: "Retorna sumula com sucesso",
+        404: "Erro ao retornar sumula",
+        400: "Sumula inexistente",
+    },
+)
+@api_view(["GET"])
+def getGolsByIDPartida(request, key):
+    """Retorna gols por ID de partida"""
+    try:
+        resp = Sumula.objects.all()
+        _resp = ''
+
+        for sumula in resp:
+            if int(sumula.partida.id) == int(key):
+                _resp = sumula
+
+        if (_resp == ''):
+            return Response(data="Partida inexistente", status="400")
+
+    except:
+        return Response(data="Partida inexistente", status="400")
+
+    try:
+        serializer = SumulaSerializer(instance=_resp)
+        
+        homeGoals = 0
+        awayGoals = 0
+        homeGoalsPlayers = []
+        awayGoalsPlayers = []
+        homeCards = []
+        awayCards = []
+
+        
+        for gol in serializer.data['gols']:
+            if (gol['golPara'] == 'Home'):
+                homeGoals += gol['quantidade']
+                homeGoalsPlayers.append({'autor': gol['autor']['nome'], 'quantidade': gol['quantidade']})
+            else:
+                awayGoals += gol['quantidade']
+                awayGoalsPlayers.append({'autor': gol['autor']['nome'], 'quantidade': gol['quantidade']})
+
+        for cartao in serializer.data['cartoes']:
+            if (cartao['time'] == 'Home'):
+                homeCards.append({ 'jogador': cartao['jogador']['nome'], 'tipo': cartao['tipo'] })
+            else:
+                awayCards.append({ 'jogador': cartao['jogador']['nome'], 'tipo': cartao['tipo'] })
+
+        return Response(data={'homeGoals': homeGoals, 'awayGoals': awayGoals, 'homeGoalsPlayers': homeGoalsPlayers, 'awayGoalsPlayers': awayGoalsPlayers,
+                              'homeCards': homeCards, 'awayCards': awayCards}, status="200")
+
+    except:
+        return Response(data="Erro ao retornar sumula", status="404")
