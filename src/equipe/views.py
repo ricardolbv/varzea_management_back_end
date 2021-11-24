@@ -603,7 +603,8 @@ def createCardOnIDSumula(request, key):
 
 
     cartao = Cartao.objects.create(
-        tipo=request.data["tipo"], jogador=jogador, jogo=sumula
+        tipo=request.data["tipo"], jogador=jogador, jogo=sumula,
+        time=request.data["time"]
     )
 
     serializer = CartaoSerializer(data=model_to_dict(cartao))
@@ -669,6 +670,8 @@ def getGolsByIDPartida(request, key):
         awayGoals = 0
         homeGoalsPlayers = []
         awayGoalsPlayers = []
+        homeCards = []
+        awayCards = []
 
         
         for gol in serializer.data['gols']:
@@ -679,7 +682,14 @@ def getGolsByIDPartida(request, key):
                 awayGoals += gol['quantidade']
                 awayGoalsPlayers.append({'autor': gol['autor']['nome'], 'quantidade': gol['quantidade']})
 
-        return Response(data={'homeGoals': homeGoals, 'awayGoals': awayGoals, 'homeGoalsPlayers': homeGoalsPlayers, 'awayGoalsPlayers': awayGoalsPlayers}, status="200")
+        for cartao in serializer.data['cartoes']:
+            if (cartao['time'] == 'Home'):
+                homeCards.append({ 'jogador': cartao['jogador']['nome'], 'tipo': cartao['tipo'] })
+            else:
+                awayCards.append({ 'jogador': cartao['jogador']['nome'], 'tipo': cartao['tipo'] })
+
+        return Response(data={'homeGoals': homeGoals, 'awayGoals': awayGoals, 'homeGoalsPlayers': homeGoalsPlayers, 'awayGoalsPlayers': awayGoalsPlayers,
+                              'homeCards': homeCards, 'awayCards': awayCards}, status="200")
 
     except:
         return Response(data="Erro ao retornar sumula", status="404")

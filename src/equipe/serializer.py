@@ -75,6 +75,7 @@ class CartaoSerializer(serializers.ModelSerializer):
             "id",
             "tipo",
             "jogador",
+            "time",
         )
 
 class SumulaSerializer(serializers.ModelSerializer):

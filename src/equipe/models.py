@@ -150,7 +150,7 @@ CartaoAPIFields = openapi.Schema(
     properties={
         "tipo": openapi.Schema(type=openapi.TYPE_STRING),
         "jogador": openapi.Schema(type=openapi.TYPE_INTEGER),
-        "golPara": openapi.Schema(type=openapi.TYPE_STRING),
+        "time": openapi.Schema(type=openapi.TYPE_STRING),
     },
 )
 
@@ -158,6 +158,7 @@ class Cartao(models.Model):
     jogo = models.ForeignKey(Sumula, on_delete=models.DO_NOTHING)
     tipo = models.CharField(max_length=25, default="")
     jogador = models.ForeignKey(Jogador, on_delete=models.CASCADE)
+    time = models.CharField(max_length=25, default="")
     
 
 
